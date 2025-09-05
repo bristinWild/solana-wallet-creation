@@ -15,5 +15,26 @@ console.log(`Wallet Info: ${JSON.stringify(accountInfo, null, 2)}`);
 
 const tokenAddress = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
 const tokenProgramInfo = await connection.getAccountInfo(tokenAddress);
-console.log(`Token Program Info: ${JSON.stringify(tokenProgramInfo, null, 2)}`)
+console.log(`Token Program Info: ${JSON.stringify(tokenProgramInfo, (key, value) => {
+    if (key === "data" && value && value.length > 1) {
+        return [
+            value[0],
+            "...truncated, total bytes: " + value.length + "...",
+            value[value.length - 1]
+        ];
+    }
+    return value;
+}, 2)}`)
 
+const usdcTokenAddress = new PublicKey('EmXq3Ni9gfudTiyNKzzYvpnQqnJEMRw2ttnVXoJXjLo1')
+const usdcTokenInfo = await connection.getAccountInfo(usdcTokenAddress);
+console.log(`USDC Token Info: ${JSON.stringify(usdcTokenInfo, (key, value) => {
+    if (key === "data" && value && value.length > 1) {
+        return [
+            value[0],
+            "...truncated, total bytes: " + value.length + "...",
+            value[value.length - 1]
+        ];
+    }
+    return value;
+}, 2)}`)
