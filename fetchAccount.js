@@ -1,4 +1,5 @@
 import { Keypair, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { getMint } from '@solana/spl-token';
 
 const keypair = Keypair.generate();
 
@@ -38,3 +39,15 @@ console.log(`USDC Token Info: ${JSON.stringify(usdcTokenInfo, (key, value) => {
     }
     return value;
 }, 2)}`)
+
+
+const mintData = await getMint(connection, usdcTokenAddress, 'confirmed');
+console.log(`USDC Mint Info: ${JSON.stringify(mintData, (key, value) => {
+    if (typeof value === "bigint") {
+        return value.toString();
+    }
+    if (Buffer.isBuffer(value)) {
+        return `<Buffer ${value.toString("hex")}>`;
+    }
+    return value;
+}, 2)}`);
