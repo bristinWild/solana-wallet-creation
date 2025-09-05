@@ -1,4 +1,4 @@
-import { Keypair, Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Keypair, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 const keypair = Keypair.generate();
 
@@ -10,4 +10,10 @@ const signature = await connection.requestAirdrop(keypair.publicKey, LAMPORTS_PE
 await connection.confirmTransaction(signature);
 
 const accountInfo = await connection.getAccountInfo(keypair.publicKey);
-console.log(JSON.stringify(accountInfo, null, 2));
+console.log(`Wallet Info: ${JSON.stringify(accountInfo, null, 2)}`);
+
+
+const tokenAddress = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
+const tokenProgramInfo = await connection.getAccountInfo(tokenAddress);
+console.log(`Token Program Info: ${JSON.stringify(tokenProgramInfo, null, 2)}`)
+
