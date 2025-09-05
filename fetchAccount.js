@@ -1,12 +1,15 @@
-import { Keypair, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Keypair, Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { getMint } from '@solana/spl-token';
 
 const keypair = Keypair.generate();
+const sender = new Keypair();
+const receiver = new Keypair();
 
 console.log(`Public Key:, ${keypair.publicKey}`);
 
-const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
-const signature = await connection.requestAirdrop(keypair.publicKey, LAMPORTS_PER_SOL);
+const connection = new Connection('https://http://localhost:8899', 'confirmed');
+
+const signature = await connection.requestAirdrop(sender.publicKey, LAMPORTS_PER_SOL);
 
 await connection.confirmTransaction(signature);
 
@@ -51,3 +54,26 @@ console.log(`USDC Mint Info: ${JSON.stringify(mintData, (key, value) => {
     }
     return value;
 }, 2)}`);
+
+//writing states 
+
+const transferInstruction = SystemProgram.transfer({
+    fromPubkey: sender.publicKey,
+    toPubkey: receiver.publicKey,
+    lamports: LAMPORTS_PER_SOL / 100,
+});
+
+const transaction = new Transaction().add(transferInstruction);
+const transactionSignature = await sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [sender]
+);
+
+console.log(`Transaction Signature: ${transactionSignature}`);
+
+const senderBalance = await connection.getBalance(sender.publicKey);
+const receiverBalance = await connection.getBalance(receiver.publicKey);
+
+console.log(`Sender Balance: ${senderBalance}`);
+console.log(`Receiver Balance: ${receiverBalance}`);
